@@ -1,0 +1,146 @@
+header {
+    color: #fff;
+    padding: 0px 0px 0px 0px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+body {
+    background-color: rgb(8, 8, 8);;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+}
+#dateBar {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 50px;
+    color: #fff;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    font-size: 15px;
+}
+#dateBar div {
+    display: inline-block;
+    text-align: center;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+#date div{
+    display: inline-block;
+    width: 10px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+#addTask {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    color: #fff;
+    text-align: center;
+    padding: 0px 0px 0px 0px;
+    margin: 10px 0px 0px 0px;
+}
+#time {
+    float: center;
+    width: 100%;
+    height: 50px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 15px 15px;
+    margin: 0px 0px 0px 0px;
+    font-size: 15px;
+}
+.current-day {
+    font-weight: bold;
+    color: red; /* You can customize the highlighting styles */
+}
+.task {
+    transition: transform 0.3s ease-in-out;
+}
+
+.completed {
+    border: solid #00ff00 !important;; 
+}
+#taskList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.task {
+    height: 40px;
+    position: relative;
+    border:  solid #ff0000;
+    color: #fff;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 0 20px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    cursor: pointer;
+    width: 60%;
+}
+.task img {
+    height: 25px;
+    margin-left: 15px;
+    cursor: pointer;
+}
+#dateBar button {
+    background-color: rgb(8, 8, 8);
+    color: #fff;
+    border: none;
+    margin-left: 10px;
+    cursor: pointer;
+    border: solid #ffffff;
+    width: 50px;
+    height: 25px;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+#dateBar button:hover {
+    box-shadow: #ffffff 0px 0px 10px;
+    transition: 0.5s;
+}
+
+#addTask button {
+    background-color: rgb(8, 8, 8);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border: solid #ffffff;
+    width: 50px;
+    height: 25px;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+#addTask button:hover {
+    box-shadow: #ffffff 0px 0px 10px;
+    transition: 0.5s;
+}
+
+#addTask input {
+    background-color: rgb(8, 8, 8);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border: solid #ffffff;
+    width: 200px;
+    height: 25px;
+    border-radius: 10px;
+    font-size: 15px;
+}
