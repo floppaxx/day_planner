@@ -47,10 +47,11 @@ jobs:
 
     - name: Install golangci-lint
       run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.41.1
+      shell: bash
 
-    - name: Lint with golangci-lint
-      run: golangci-lint run ./...
+    - name: Lint
+      run: ./bin/golangci-lint run
 
   deploy:
     runs-on: ubuntu-latest
@@ -69,4 +70,4 @@ jobs:
       run: docker login -u floppax -p ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Push Docker image to Docker Hub
-      run: docker push floppax/test_assigment:latest
+      run: docker push floppax/web-app-automation:latest
