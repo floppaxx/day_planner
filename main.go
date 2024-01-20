@@ -8,7 +8,7 @@ import (
 	"strconv"
     "github.com/rs/cors"
     "time"
-    //"os"
+    "os"
 
 	"github.com/gorilla/mux"
 	_ "github.com/go-sql-driver/mysql"
@@ -21,28 +21,21 @@ type Task struct {
 	CreatedAt string `json:"created_at"`
 }
 
+var (
+	DATABASEUSER     = os.Getenv("DATABASEUSER")
+	DATABASEPASSWORD = os.Getenv("DATABASEPASSWORD")
+	DATABASENAME     = os.Getenv("DATABASENAME")
+	DATABASEHOST     = os.Getenv("DATABASEHOST")
+	DATABASEPORT     = os.Getenv("DATABASEPORT")
+)
 
+func getDBConnectionString() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		DATABASEUSER, DATABASEPASSWORD, DATABASEHOST, DATABASEPORT, DATABASENAME)
+}
 
 func main() {
-    //var DATABASEUSER = os.Getenv("DATABASEUSER")
-    //var DATABASEPASSWORD = os.Getenv("DATABASEPASSWORD")
-    // var DATABASEUSER = "app_db"
-    // var DATABASEPASSWORD = "app_pass+123"
-    // var DATABASENAME = "app_db"
-    // var DATABASEHOST = "db"
-    // var DATABASEPORT = "3306"
-    //var EXPOSEDPORT = "8001"
-
-    // fmt.Println("DATABASEUSER: ", DATABASEUSER)
-    // fmt.Println("DATABASEPASSWORD: ", DATABASEPASSWORD)
-    // fmt.Println("DATABASENAME: ", DATABASENAME)
-    // fmt.Println("DATABASEHOST: ", DATABASEHOST)
-    // fmt.Println("DATABASEPORT: ", DATABASEPORT)
-    // fmt.Println("EXPOSEDPORT: ", EXPOSEDPORT)
-
-
-
-    db, err := sql.Open("mysql", "app_user:app_pass+123@tcp(db:3306)/app_db?parseTime=true")
+	db, err := sql.Open("mysql", getDBConnectionString())
 	if err != nil {
 		panic(err.Error())
 	}
@@ -95,7 +88,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var tasks []Task
-    db, err := sql.Open("mysql", "app_user:app_pass+123@tcp(db:3306)/app_db?parseTime=true")
+	db, err := sql.Open("mysql", getDBConnectionString())
 	if err != nil {
 		panic(err.Error())
 	}
@@ -126,7 +119,7 @@ func writeTasks(w http.ResponseWriter, r *http.Request) {
     }
 
     fmt.Println("Received task:", newTask)
-    db, err := sql.Open("mysql", "app_user:app_pass+123@tcp(db:3306)/app_db?parseTime=true")
+	db, err := sql.Open("mysql", getDBConnectionString())
 	if err != nil {
 		panic(err.Error())
 	}
@@ -165,7 +158,7 @@ func deleteTasks(w http.ResponseWriter, r *http.Request) {
     }
 
     // Perform deletion in the database (assuming taskId is the primary key)
-    db, err := sql.Open("mysql", "app_user:app_pass+123@tcp(db:3306)/app_db?parseTime=true")
+	db, err := sql.Open("mysql", getDBConnectionString())
     if err != nil {
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return
@@ -210,7 +203,7 @@ func completeTasks(w http.ResponseWriter, r *http.Request) {
     }
 
     // Perform the update in the database (assuming taskId is the primary key)
-    db, err := sql.Open("mysql", "app_user:app_pass+123@tcp(db:3306)/app_db?parseTime=true")
+	db, err := sql.Open("mysql", getDBConnectionString())
     if err != nil {
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return
