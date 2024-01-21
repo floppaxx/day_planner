@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: web-app:latest
+    image: floppax/web-app-automation
     ports:
       - 8001:8001
     volumes:
