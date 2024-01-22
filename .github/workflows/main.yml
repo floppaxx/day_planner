@@ -1,4 +1,4 @@
-name: Build, Test, Lint, and Deploy
+name: Build, Test, Lint, and Deliver
 
 on: [push,pull_request]
 
@@ -20,6 +20,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    needs: build
 
     steps:
     - name: Checkout code
@@ -30,11 +31,14 @@ jobs:
       with:
         go-version: 1.18
 
+
+
     - name: Test
       run: go test ./...
 
   lint:
     runs-on: ubuntu-latest
+    needs: test
 
     steps:
     - name: Checkout code
@@ -53,8 +57,9 @@ jobs:
     - name: Lint
       run: ./bin/golangci-lint run
 
-  deploy:
+  deliver:
     runs-on: ubuntu-latest
+    needs: lint
 
     steps:
     - name: Checkout code
@@ -71,3 +76,7 @@ jobs:
 
     - name: Push Docker image to Docker Hub
       run: docker push floppax/web-app-automation:latest
+
+
+
+
