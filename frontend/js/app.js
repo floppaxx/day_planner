@@ -1,5 +1,5 @@
 // Replace this base URL with the actual URL where your Go backend is hosted
-const backendBaseUrl = 'http://localhost:8001';
+const backendBaseUrl = 'http://localhost:80';
  
 function date() {
     const currentDate = new Date();

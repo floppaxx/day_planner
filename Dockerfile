@@ -19,7 +19,6 @@ COPY ./frontend /frontend
 
 # Expose the port on which your Go application runs
 EXPOSE 8001
-EXPOSE 3306
 
 # Command to run the executable
 CMD ["./main"]
