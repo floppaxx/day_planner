@@ -30,6 +30,12 @@ jobs:
       run: |
         ./replace_ips.sh "${{ github.event.inputs.vm1_ip }}" "${{ github.event.inputs.vm2_ip }}"
 
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: hosts
+        path: ansible/hosts
+
   set_priv_key:
     needs: replace_ips
     runs-on: ubuntu-latest
@@ -48,6 +54,12 @@ jobs:
 
     - name: Set permissions for private key
       run: chmod 400 private_key.pem
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: private_key
+        path: private_key.pem
     
 
   deploy:
@@ -57,6 +69,18 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: hosts
+        path: ansible
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: private_key
+        path: .
 
     - name: Set up Python
       uses: actions/setup-python@v4
