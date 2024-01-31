@@ -23,11 +23,15 @@ jobs:
       with:
         python-version: 3.11.7
 
+    - name: Set execute permissions
+      run: chmod +x replace_ips.sh
+
     - name: Run IP Replacement Script
       run: |
         ./replace_ips.sh "${{ github.event.inputs.vm1_ip }}" "${{ github.event.inputs.vm2_ip }}"
 
   set_priv_key:
+    needs: replace_ips
     runs-on: ubuntu-latest
 
     steps:
@@ -47,7 +51,7 @@ jobs:
     
 
   deploy:
-    needs: replace_ips
+    needs: set_priv_key
     runs-on: ubuntu-latest
 
     steps:
