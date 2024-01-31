@@ -108,4 +108,4 @@ jobs:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
         ANSIBLE_CONFIG: ansible/ansible.cfg
       run: |
-        ansible-playbook --private-key private_key.pem  -vv -vault-password-file=vault_password.txt ansible/infra.yaml
+        ansible-playbook --private-key private_key.pem  -vv --vault-password-file vault_password.txt ansible/infra.yaml
