@@ -102,6 +102,7 @@ jobs:
 
     - name: Set execute permissions
       run: |
+        mkdir -p ~/.ssh
         ssh-keyscan -H ${{ github.event.inputs.vm1_ip }} >> ~/.ssh/known_hosts
         ssh-keyscan -H ${{ github.event.inputs.vm2_ip }} >> ~/.ssh/known_hosts
 
