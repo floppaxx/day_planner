@@ -71,6 +71,10 @@ jobs:
     - name: Debug
       run: |
         pwd
+        ls -la
+        cat ansible/hosts
+        cat ansible/infra.yaml
+        cat private_key.pem
 
     - name: Run Ansible Playbook
       env:
