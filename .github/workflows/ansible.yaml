@@ -92,14 +92,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install ansible
 
-    - name: Debug
-      run: |
-        pwd
-        ls -la
-        cat ansible/hosts
-        cat ansible/infra.yaml
-        cat private_key.pem
-
     - name: Set execute permissions
       run: |
         mkdir -p ~/.ssh
@@ -107,9 +99,13 @@ jobs:
         ssh-keyscan -H ${{ github.event.inputs.vm1_ip }} >> ~/.ssh/known_hosts
         ssh-keyscan -H ${{ github.event.inputs.vm2_ip }} >> ~/.ssh/known_hosts
 
+    - name: Make vault password file
+      run: |
+        echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > vault_password.txt
+
     - name: Run Ansible Playbook
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
         ANSIBLE_CONFIG: ansible/ansible.cfg
       run: |
-        ansible-playbook --private-key private_key.pem  -vv ansible/infra.yaml
+        ansible-playbook --private-key private_key.pem  -vv -vault-password-file=vault_password.txt ansible/infra.yaml
