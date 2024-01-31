@@ -1,0 +1,27 @@
+- name: Install package nginx
+  ansible.builtin.apt:
+    name: nginx
+
+- name: Copy Nginx default config to sites-enabled
+  template:
+    src: default
+    dest: /etc/nginx/sites-enabled/default
+  notify: restart nginx
+
+- name: Start and enable nginx
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+#Exporter
+- name: Run Nginx Exporter Docker container
+  docker_container:
+    name: nginx-exporter
+    image: nginx/nginx-prometheus-exporter:1.1.0
+    restart_policy: unless-stopped
+    network_mode: host
+    detach: yes
+    ports:
+      - "9113:9113"
+    command: -nginx.scrape-uri=http://vm-1:8080/stub_status

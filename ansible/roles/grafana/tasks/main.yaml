@@ -1,0 +1,62 @@
+- name: Install Grafana
+  community.docker.docker_container:
+    name: grafana
+    image: grafana/grafana
+    restart_policy: unless-stopped
+    published_ports: "{{ grafana_port }}:3000"
+    volumes: /opt/grafana:/etc/grafana
+    state: started
+
+- name: Create directories
+  file:
+    path: /opt/grafana/provisioning/{{ item }}
+    state: directory
+  loop:
+    - dashboards
+    - datasources
+
+- name: Create Grafana config directory
+  file:
+    path: /opt/grafana/
+    state: directory
+
+- name: Copy Grafana files
+  copy:
+    src: "{{ item }}"
+    dest: /opt/grafana/provisioning/dashboards/{{ item }}
+  loop:
+      - 'main.json'
+      - 'mysql.json'
+
+
+- name: Copy Grafana templates
+  template:
+    src: dashboard.yaml
+    dest: /opt/grafana/provisioning/dashboards/default.yaml
+
+- name: Copy Grafana templates
+  template:
+    src: datasources.yaml.j2
+    dest: /opt/grafana/provisioning/datasources/default.yaml
+  notify: restart grafana
+
+- name: Copy Grafana config
+  template:
+    src: grafana.ini.j2
+    dest: /opt/grafana/grafana.ini
+  no_log: true
+  notify: restart grafana
+
+
+#Add CNAME record for Grafana
+- name: Add CNAME records for Grafana
+  community.general.nsupdate:
+    zone: "domain.cool"
+    record: "grafana"
+    value: "{{ inventory_hostname }}"
+    type: "CNAME"
+    key_algorithm: "hmac-sha256"
+    server: "{{ hostvars[groups['dns_primary'][0]]['ansible_default_ipv4']['address'] }}"
+    key_name: "update.key" 
+    key_secret: "{{update_key}}" 
+  no_log: true

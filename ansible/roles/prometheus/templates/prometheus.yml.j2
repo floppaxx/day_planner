@@ -1,0 +1,53 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    metrics_path: '/prometheus/metrics'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['vm-2:{{ prometheus_port }}']
+
+  - job_name: 'linux'
+    static_configs:
+      - targets: 
+          {% for vm in groups['all'] %}
+           - {{ hostvars[vm]['inventory_hostname'] }}:{{ prometheus_node_exporter_port }}
+          {% endfor %}
+  
+  - job_name: 'bind'
+    static_configs:
+      - targets:
+          {% for vm in groups['dns_server'] %}
+           - {{ hostvars[vm]['inventory_hostname'] }}:{{ prometheus_bind_exporter_port }}
+          {% endfor %}
+
+  - job_name: 'mysql'
+    static_configs:
+      - targets:
+          {% for vm in groups['db_server'] %}
+           - {{ hostvars[vm]['inventory_hostname'] }}:{{ prometheus_mysql_exporter_port }}
+          {% endfor %}
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets:
+          {% for vm in groups['nginx'] %}
+           - {{ hostvars[vm]['inventory_hostname'] }}:{{ prometheus_nginx_exporter_port }}
+          {% endfor %}
+
+  - job_name: 'haproxy'
+    static_configs:
+      - targets:
+          {% for vm in groups['load_balancer'] %}
+           - {{ hostvars[vm]['inventory_hostname'] }}:{{ prometheus_haproxy_exporter_port }}
+          {% endfor %}
+
+  - job_name: 'keepalived'
+    static_configs:
+      - targets:
+          {% for vm in groups['load_balancer'] %}
+           - {{ hostvars[vm]['inventory_hostname'] }}:{{ prometheus_keepalived_exporter_port }}
+          {% endfor %}

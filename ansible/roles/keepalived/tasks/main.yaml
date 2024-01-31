@@ -1,0 +1,52 @@
+- name: Install keepalived
+  apt:
+    name: keepalived
+
+- name: Configure keepalived 
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  no_log: true
+  notify: restart keepalived  
+
+- name: Create user for keepalived_script
+  user:
+    name: keepalived_script
+    state: present
+    home: /keepalived
+
+- name: Configure scipt
+  template:
+    src: vrrp_script.sh
+    dest: /keepalived/
+    owner: keepalived_script
+    mode: 0700
+  notify: restart keepalived
+
+- name: Start keepalived
+  service:
+    name: keepalived
+    state: started
+    enabled: true
+
+#Exporter
+- name: Download and unarchive Keepalived exporter
+  unarchive:
+    src: https://github.com/mehdy/keepalived-exporter/releases/download/v1.3.2/keepalived-exporter-1.3.2.linux-amd64.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+
+
+- name: Copy keepalived-exporter.service
+  template:
+    src: keepalived-exporter.service
+    dest: /etc/systemd/system/keepalived-exporter.service
+  notify: 
+    - reload daemon
+    - restart keepalived exporter
+
+- name: Start and enable the service
+  systemd:
+    name: keepalived-exporter
+    state: started
+    enabled: true

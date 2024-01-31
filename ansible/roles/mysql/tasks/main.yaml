@@ -1,0 +1,143 @@
+- name: Install package mysql
+  apt:
+    name: mysql-server
+
+- name: Install package pymysql
+  apt:
+    name: python3-pymysql
+
+- name: Copy running config and restert mysql server
+  template:
+    src: override.cnf
+    dest: /etc/mysql/mysql.conf.d/override.cnf
+    mode: 0644
+  notify: restart mysql
+
+- name: Start and enable mysql
+  service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: MySQL database
+  community.mysql.mysql_db:
+    name: "{{ mysql_database }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  notify:
+    - Reset MySQL source
+    - Reset MySQL replica
+
+- name: MySQL user
+  community.mysql.mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    host: "%"
+    priv: '{{ mysql_database }}.*:ALL'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  no_log: true
+
+
+#Exporter
+# - name: Install mysql exporter
+#   ansible.builtin.apt:
+#     name: prometheus-mysqld-exporter
+
+# - name: Configure MySQL exporter
+#   template:
+#     src: .my.cnf_prometheus.j2
+#     dest: /var/lib/prometheus/.my.cnf
+#     owner: prometheus
+#     group: prometheus
+#     mode: 0600
+#   no_log: true
+#   notify: restart mysql exporter
+
+# - name: Create MySQL exporter user
+#   mysql_user:
+#     name: "{{ mysql_exporter_user }}"
+#     password: "{{ mysql_exporter_password }}"
+#     priv: "*.*:PROCESS,REPLICATION CLIENT,SELECT"
+#     login_unix_socket: /var/run/mysqld/mysqld.sock
+#   no_log: true
+
+# - name: Copy prometheus-mysqld-exporter file
+#   template:
+#     src: prometheus-mysqld-exporter
+#     dest: /etc/default/prometheus-mysqld-exporter
+#   notify: restart mysql exporter
+
+
+# - name: Start mysql exporter
+#   service:
+#     name: prometheus-mysqld-exporter
+#     state: started
+#     enabled: true
+
+# Replication
+
+- name: Create replication user
+  community.mysql.mysql_user:
+    name: "{{ mysql_replication_user }}"
+    password: "{{ mysql_replication_password }}"
+    host: "%"
+    priv: '*.*:REPLICATION SLAVE'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  no_log: true
+
+
+- community.mysql.mysql_variables:
+    variable: read_only
+    value: "{{ 'OFF' if inventory_hostname == mysql_host else 'ON' }}"
+    mode: persist
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  notify:
+    - Reset MySQL source
+    - Reset MySQL replica
+
+# Exporter
+- name: Install mysql exporter
+  ansible.builtin.apt:
+    name: prometheus-mysqld-exporter
+
+- name: Configure MySQL exporter
+  template:
+    src: my.cnf
+    dest: /var/lib/prometheus/.my.cnf
+    owner: prometheus
+    group: prometheus
+    mode: 0600
+  no_log: true
+  notify: restart mysql exporter
+
+- name: Create MySQL exporter user
+  mysql_user:
+    name: "{{ mysql_exporter_user }}"
+    password: "{{ mysql_exporter_password }}"
+    priv: "*.*:PROCESS,REPLICATION CLIENT,SELECT"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  no_log: true
+
+- name: Copy prometheus-mysqld-exporter file
+  template:
+    src: prometheus-mysqld-exporter
+    dest: /etc/default/prometheus-mysqld-exporter
+  notify: restart mysql exporter
+
+
+- name: Start mysql exporter
+  service:
+    name: prometheus-mysqld-exporter
+    state: started
+    enabled: true
+
+#Add CNAME record for MySQL
+- name: Add CNAME records for MySQL
+  community.general.nsupdate:
+    zone: "domain.cool"
+    record: "mysql-{{ inventory_hostname | replace ('vm-', '')}}"
+    value: "{{ inventory_hostname }}"
+    type: "CNAME"
+    key_algorithm: "hmac-sha256"
+    server: "{{ hostvars[groups['dns_primary'][0]]['ansible_default_ipv4']['address'] }}"
+    key_name: "update.key" 
+    key_secret: "{{ update_key }}" 

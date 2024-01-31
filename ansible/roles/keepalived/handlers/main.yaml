@@ -1,0 +1,13 @@
+- name: restart keepalived
+  service:
+    name: keepalived
+    state: restarted
+
+- name: reload daemon
+  systemd:
+    daemon_reload: true
+  
+- name: restart keepalived exporter
+  service:
+    name: keepalived-exporter
+    state: restarted

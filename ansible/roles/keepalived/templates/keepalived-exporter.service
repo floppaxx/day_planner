@@ -1,0 +1,11 @@
+[Unit]
+Description=Keepalived Exporter
+Documentation=https://github.com/mehdy/keepalived-exporter
+After=network-online.target
+
+[Service]
+User=root
+ExecStart=/usr/local/bin/keepalived-exporter --web.listen-address=:{{ prometheus_keepalived_exporter_port }}
+
+[Install]
+WantedBy=default.target

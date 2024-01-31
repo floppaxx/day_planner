@@ -1,0 +1,43 @@
+- name: Install bind9 and its dependancies
+  apt:
+    name:
+      - bind9
+      - python3-dnspython
+
+- name: copy default config file
+  template:
+    src: named.conf.options.j2
+    dest: /etc/bind/named.conf.options
+  notify: restart bind9
+
+- name: Zone config
+  template:
+    src: db.{{ item }}.j2
+    dest: /var/cache/bind/db.{{ item }}
+    force: no
+  notify: reload rndc
+  when: inventory_hostname in groups['dns_primary']
+  loop: 
+    - "domain.cool"
+
+- name: Execute handlers
+  meta: flush_handlers
+
+- name: Start bind9
+  service:
+    name: bind9
+    state: started
+    enabled: true
+
+#Exporter
+- name: Run BIND Exporter Docker container
+  docker_container:
+    name: bind-exporter
+    image: prometheuscommunity/bind-exporter:v0.3.0
+    restart_policy: unless-stopped
+    network_mode: host
+    detach: yes
+    env:
+      BIND_EXPORTER_ARGS: "--bind.stats-url=http://vm-1:8053"
+    ports:
+      - "9119:9119"

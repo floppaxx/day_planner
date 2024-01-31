@@ -1,0 +1,54 @@
+options {
+	directory "/var/cache/bind";
+	forwarders {
+      {% for f in dns_forwarders %}
+	    {{ f }};
+      {% endfor %}
+	};
+    allow-query { {{ localhost }}; {{ local_network }}; {{ docker_network }}; };
+};
+
+
+zone "{{ domain }}" {
+{% if inventory_hostname in groups['dns_primary']%}
+  type primary;
+  allow-update { key update.key ;};   
+  allow-transfer {
+    {% for vm in hostvars %}
+	{{ hostvars[vm]['ansible_default_ipv4']['address'] }};
+	{% endfor %}
+    key transfer.key ;
+  };
+{% else %}
+  type secondary;
+  masters { 
+    {% for vm in groups['dns_primary'] %}
+      {{ hostvars[vm]['ansible_default_ipv4']['address'] }};
+    {% endfor %}
+  };
+{% endif %}
+  file "/var/cache/bind/db.{{ domain }}";
+};
+
+statistics-channels {
+  inet 127.0.0.1 port 8053 allow { 127.0.0.1; };
+};
+
+{% if inventory_hostname in groups['dns_secondary']%}
+{% for primary in groups['dns_primary'] %}
+server {{ hostvars[primary]['ansible_default_ipv4']['address'] }} {
+  keys { transfer.key; };
+};
+{% endfor %}
+{% endif %}
+
+key "transfer.key" {
+	algorithm hmac-sha256;
+	secret "{{ transfer_key }}";
+};
+
+
+key "update.key" {
+	algorithm hmac-sha256;
+	secret "{{ update_key }}";
+};

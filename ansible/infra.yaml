@@ -1,0 +1,66 @@
+---
+  - name: Initialsetup
+    hosts: hello
+    roles:
+      - hello
+    tags: h
+
+  - name: Bind
+    hosts: dns_server
+    roles:
+      - bind
+    tags: dns
+
+  - name: DNS Resolver
+    hosts: all
+    roles:
+      - dns_resolver
+    tags: dr
+
+  - name: Docker
+    hosts: docker
+    roles: 
+      - docker
+    tags: d
+
+  - name: DB
+    hosts: db_server
+    roles:
+      - mysql
+    tags: db
+
+  - name: Nginx
+    hosts: nginx
+    roles:
+      - nginx
+    tags: w
+
+  - name: App
+    hosts: app_server
+    roles:
+      - web-app
+    tags: app
+
+  - name: HAProxy
+    hosts: load_balancer
+    roles:
+      - haproxy
+    tags: ha
+
+  - name: Keepalived
+    hosts: load_balancer
+    roles:
+      - keepalived
+    tags: k
+  
+  - name: Prometheus
+    hosts: prometheus
+    roles:
+      - prometheus
+    tags: p
+
+  - name: Grafana
+    hosts: grafana
+    roles:
+      - grafana
+    tags: g

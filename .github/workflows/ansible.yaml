@@ -1,0 +1,52 @@
+name: Ansible Playbook
+
+on:
+  workflow_dispatch:
+    inputs:
+      vm1_ip:
+        description: 'VM-1 IP Address'
+        required: true
+      vm2_ip:
+        description: 'VM-2 IP Address'
+        required: true
+
+jobs:
+  replace_ips:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Bash
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11.7
+
+    - name: Run IP Replacement Script
+      run: |
+        ./replace_ips.sh "${{ github.event.inputs.vm1_ip }}" "${{ github.event.inputs.vm2_ip }}"
+
+  deploy:
+    needs: replace_ips
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11.7
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ansible
+
+    - name: Run Ansible Playbook
+      env:
+        ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
+      run: |
+        ansible-playbook --vault-password-file <(echo $ANSIBLE_VAULT_PASSWORD) -i ansible/hosts ansible/infra.yaml

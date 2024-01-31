@@ -1,0 +1,10 @@
+- name: Stop systemd-resolved service
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+
+- name: Change DNS configuration file
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf

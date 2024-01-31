@@ -1,0 +1,11 @@
+[server]
+root_url = http://{{ ansible_host }}:80/grafana
+serve_from_sub_path = true
+
+[security]
+admin_user = {{ grafana_user }}
+admin_password = {{ grafana_password }}
+
+[dashboards]
+default_home_dashboard_path = {{ dashboard_path }}
+

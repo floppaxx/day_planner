@@ -1,0 +1,36 @@
+- name: Pull Docker Image from Docker Hub
+  docker_image:
+    name: floppax/web-app-automation:latest
+    source: pull
+
+- name: Run Docker Container
+  docker_container:
+    name: "web-app-{{ item }}"
+    image: "floppax/web-app-automation:latest"
+    state: started
+    restart_policy: unless-stopped
+    published_ports:
+      - "800{{ item }}:8001"
+    env:
+      DATABASEHOST: "{{ mysql_host }}"
+      DATABASEUSER: "{{ mysql_user }}"
+      DATABASEPASSWORD: "{{ mysql_password }}"
+      DATABASENAME: "{{ mysql_database }}"
+      DATABASEPORT: "3306"
+  with_sequence: count={{ container_count_per_vm }}
+
+- name: Debug
+  debug:
+    msg: " {{ mysql_password}}"
+
+- name: Add CNAME records for agama
+  community.general.nsupdate:
+    zone: "domain.cool"
+    record: "www-{{ inventory_hostname | replace ('vm-', '')}}"
+    value: "{{ inventory_hostname }}"
+    type: "CNAME"
+    key_algorithm: "hmac-sha256"
+    server: "{{ hostvars[groups['dns_primary'][0]]['ansible_default_ipv4']['address'] }}"
+    key_name: "update.key" 
+    key_secret: "{{ update_key }}" 
+  no_log: true

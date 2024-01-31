@@ -1,0 +1,7 @@
+- name: Install Docker
+  apt:
+    name: docker.io
+
+- name: Install python3-docker
+  apt:
+    name: python3-docker

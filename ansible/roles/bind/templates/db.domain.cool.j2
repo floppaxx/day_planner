@@ -1,0 +1,16 @@
+$TTL	604800
+{{ domain }}.	IN	SOA	{{ domain }}. vm.{{ domain }}. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+
+{% for vm in groups['dns_server'] %}
+{{ domain }}.	IN	NS	{{ vm }}.{{domain}}.
+{% endfor %}
+
+{% for vm in dns_a_records %}
+{{ vm }}	IN	A	{{dns_a_records[vm]}}
+{% endfor%}
