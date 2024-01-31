@@ -111,4 +111,4 @@ jobs:
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
       run: |
-        ansible-playbook --private-key private_key.pem -i ansible/hosts ansible/infra.yaml
+        ansible-playbook --private-key private_key.pem  ansible/infra.yaml
