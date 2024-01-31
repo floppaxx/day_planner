@@ -100,6 +100,11 @@ jobs:
         cat ansible/infra.yaml
         cat private_key.pem
 
+    - name: Set execute permissions
+      run: |
+        ssh-keyscan -H ${{ github.event.inputs.vm1_ip }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ github.event.inputs.vm2_ip }} >> ~/.ssh/known_hosts
+
     - name: Run Ansible Playbook
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
