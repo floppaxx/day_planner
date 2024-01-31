@@ -27,6 +27,25 @@ jobs:
       run: |
         ./replace_ips.sh "${{ github.event.inputs.vm1_ip }}" "${{ github.event.inputs.vm2_ip }}"
 
+  set_priv_key:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Bash
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11.7
+
+    - name: Set private key
+      run: echo "${{ secrets.SSH_PRIV_KEY }}" > private_key.pem  
+
+    - name: Set permissions for private key
+      run: chmod 400 private_key.pem
+    
+
   deploy:
     needs: replace_ips
     runs-on: ubuntu-latest
@@ -49,4 +68,4 @@ jobs:
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
       run: |
-        ansible-playbook --vault-password-file <(echo $ANSIBLE_VAULT_PASSWORD) -i ansible/hosts ansible/infra.yaml
+        ansible-playbook --private-key private_key.pem -i ansible/hosts ansible/infra.yaml
