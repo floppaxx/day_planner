@@ -103,11 +103,11 @@ jobs:
       run: |
         echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ansible/vault_password
 
-    - name: Debug
+    - name: Install Ansible Collection
       run: |
-        cat ansible/vault_password
-        ls -al ansible
-
+        ansible-galaxy collection install community.general
+        ansible-galaxy collection install community.docker
+        ansible-galaxy collection install community.mysql
 
     - name: Run Ansible Playbook
       env:
