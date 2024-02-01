@@ -103,6 +103,10 @@ jobs:
       run: |
         echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ansible/vault_password
 
+    - name: Debug
+      run: |
+        cat ansible/vault_password
+
     - name: Run Ansible Playbook
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
