@@ -106,6 +106,8 @@ jobs:
     - name: Debug
       run: |
         cat ansible/vault_password
+        ls -al ansible
+        
 
     - name: Run Ansible Playbook
       env:
