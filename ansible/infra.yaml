@@ -5,6 +5,12 @@
       - hello
     tags: h
 
+  - name: Docker
+    hosts: docker
+    roles: 
+      - docker
+    tags: d
+    
   - name: Bind
     hosts: dns_server
     roles:
@@ -17,11 +23,6 @@
       - dns_resolver
     tags: dr
 
-  - name: Docker
-    hosts: docker
-    roles: 
-      - docker
-    tags: d
 
   - name: DB
     hosts: db_server
