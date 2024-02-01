@@ -5,6 +5,10 @@ vm-2 ansible_host=<vm2-ip> ansible_port=22 ansible_user=azureuser
 vm-1
 vm-2
 
+[docker]
+vm-1
+vm-2
+
 [dns_server]
 vm-1
 vm-2
@@ -14,10 +18,6 @@ vm-2
 
 [dns_secondary]
 vm-1
-
-[docker]
-vm-1
-vm-2
 
 [db_server]
 vm-1
