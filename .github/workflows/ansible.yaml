@@ -101,7 +101,7 @@ jobs:
 
     - name: Make vault password file
       run: |
-        echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ansible/vault_password.txt
+        echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ansible/vault_password
 
     - name: Run Ansible Playbook
       env:
