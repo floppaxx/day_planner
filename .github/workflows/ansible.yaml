@@ -107,11 +107,11 @@ jobs:
       run: |
         cat ansible/vault_password
         ls -al ansible
-        
+
 
     - name: Run Ansible Playbook
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
         ANSIBLE_CONFIG: ansible/ansible.cfg
       run: |
-        ansible-playbook --private-key private_key.pem  -vv ansible/infra.yaml
+        ansible-playbook --private-key private_key.pem --vault-password-file ansible/vault_password -vv ansible/infra.yaml
