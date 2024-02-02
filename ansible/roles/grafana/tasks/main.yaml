@@ -3,6 +3,7 @@
     name: grafana
     image: grafana/grafana
     restart_policy: unless-stopped
+    network_mode: host
     published_ports: "{{ grafana_port }}:3000"
     volumes: /opt/grafana:/etc/grafana
     state: started
