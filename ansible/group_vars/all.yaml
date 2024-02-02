@@ -45,7 +45,7 @@ grafana_password: !vault |
           3033363731366165370a383961393539633261646566663966613238393836363338363362336535
           36316231646436346162396538663964646332303637623563646235663435373033
 
-node_id: "{{ inventory_hostname.split('-')[-1] | int)}}"
+node_id: "{{ inventory_hostname.split('-')[-1] | int }}"
 
 domain: domain.cool
 domain_name: domain
