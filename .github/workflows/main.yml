@@ -61,7 +61,7 @@ jobs:
     - name: Lint
       run: |
         cd web-app
-        ./bin/golangci-lint run
+        ../bin/golangci-lint run
 
   deliver:
     runs-on: ubuntu-latest
