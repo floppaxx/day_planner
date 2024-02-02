@@ -23,6 +23,7 @@ To-do list:
   2. Implement backup and logging solutions.
   3. Write actual tests
   4. Add users
+  
 Ansible playbook is triggered manually, because with my current Azure subscription I cannot configure Entra ID and provision VMs automatically. Therefore I need to provide VMs IPs to start playbook. VMs need to have atleast one core and 2 Gb of RAM.
 
 Ansible structure:
