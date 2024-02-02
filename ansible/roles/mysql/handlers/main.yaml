@@ -3,12 +3,6 @@
     name: mysql
     state: restarted
 
-# - name: restart mysql exporter
-#   service:
-#     name: prometheus-mysqld-exporter
-#     state: restarted
-#     enabled: true
-
 - name: Reset MySQL source
   community.mysql.mysql_replication:
     mode: "{{ item }}"
