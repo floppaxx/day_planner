@@ -8,6 +8,7 @@
   template:
     src: named.conf.options.j2
     dest: /etc/bind/named.conf.options
+  no_log: true
   notify: restart bind9
 
 - name: Zone config

@@ -104,3 +104,4 @@
     server: "{{ hostvars[groups['dns_primary'][0]]['ansible_default_ipv4']['address'] }}"
     key_name: "update.key" 
     key_secret: "{{ update_key }}" 
+  no_log: true

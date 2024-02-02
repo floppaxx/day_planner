@@ -6,6 +6,7 @@
   template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
+  no_log: true
   notify: restart HAProxy
 
 - name: Start HAProxy
@@ -25,3 +26,4 @@
     ports:
       - "9101:9101"
     command: --haproxy.scrape-uri=http://{{ haproxy_exporter_user }}:{{ haproxy_exporter_password }}@localhost:{{ haproxy_exposed_stats_port }}/stats;csv
+  no_log: true

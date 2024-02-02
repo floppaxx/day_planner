@@ -24,6 +24,7 @@
     - changeprimary
     - resetreplica
     - startreplica
+  no_log: true
   when: inventory_hostname != mysql_host
 
 

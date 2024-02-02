@@ -17,11 +17,23 @@
       DATABASEPASSWORD: "{{ mysql_password }}"
       DATABASENAME: "{{ mysql_database }}"
       DATABASEPORT: "3306"
+  no_log: true
   with_sequence: count={{ container_count_per_vm }}
 
-- name: Debug
-  debug:
-    msg: " {{ mysql_password}}"
+- name: Get info on docker host
+  community.docker.docker_host_info:
+  register: result
+
+- name: Find how many containers needs to be deleted 
+  set_fact:
+    containers_to_delete: "{{ result.host_info.Containers - container_count_per_vm }}"
+
+- name: Delete excess containers from highest to lowest
+  docker_container:
+    name: web-app-{{ item }}
+    state: absent
+  loop: "{{ range(container_count_per_vm + 1, result.host_info.Containers + 1 |int, 1) }}"
+  when: containers_to_delete | int > 0
 
 - name: Add CNAME records for agama
   community.general.nsupdate:

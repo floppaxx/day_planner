@@ -11,7 +11,7 @@ vrrp_script check_haproxy {
 vrrp_instance app {  
     authentication {
         auth_type PASS
-        auth_pass PASS
+        auth_pass {{ keepalived_password }}
     }           
     interface eth0
     virtual_router_id 140
