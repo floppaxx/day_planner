@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 8001  # Use the port your application is listening on
+      targetPort: 8001  # Port your application is running on within the pod
+  type: NodePort  # Expose the service on a NodePort, accessible externally on the Node's IP

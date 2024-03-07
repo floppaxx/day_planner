@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  replicas: 3  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: floppax/web-app-automation:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: DATABASEHOST
+          value: mysql-container
+        - name: DATABASEPORT
+          value: "3306"
+        - name: DATABASENAME
+          valueFrom:
+            secretKeyRef:
+              name: my-secrets
+              key: MYSQL_DATABASE
+        - name: DATABASEUSER
+          valueFrom:
+            secretKeyRef:
+              name: my-secrets
+              key: MYSQL_USER
+        - name: DATABASEPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-secrets
+              key: MYSQL_PASSWORD

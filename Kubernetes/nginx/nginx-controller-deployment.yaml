@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controller
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-ingress-controller
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+      labels:
+        app: nginx-ingress-controller
+    spec:
+      containers:
+      - name: nginx-ingress-controller
+        image: k8s.gcr.io/ingress-nginx/controller:latest
+        ports:
+        - name: prometheus
+          containerPort: 10254
+        args:
+        - /nginx-ingress-controller
+        - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
+        - --election-id=ingress-controller-leader
+        - --ingress-class=nginx
+      nodeSelector:
+        kubernetes.io/os: linux

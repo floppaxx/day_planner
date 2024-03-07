@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql-container
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        envFrom:
+        - secretRef:
+            name: mysql-secrets
+        volumeMounts:
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mysql-initdb
+        configMap:
+          name: mysql-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  00-init.sql: |
+    CREATE USER 'prometheus'@'%' IDENTIFIED BY 'password123';
+    GRANT PROCESS, REPLICATION CLIENT ON *.* TO 'prometheus'@'%';
+    FLUSH PRIVILEGES;
